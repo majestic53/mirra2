@@ -20,7 +20,7 @@
 #ifndef MIRRA_OBJECT_H_
 #define MIRRA_OBJECT_H_
 
-#include <vector>
+#include <map>
 #include "mirra_define.h"
 
 namespace mirra {
@@ -42,7 +42,38 @@ namespace mirra {
 
 	#define OBJECT_SUBTYPE_UNDEFINED SCALAR_INVALID(uint32_t)
 
-	typedef std::vector<void *> parameter_t;
+	typedef enum {
+		DATA_BOOLEAN = 0,
+		DATA_FLOAT,
+		DATA_SIGNED,
+		DATA_STRING,
+		DATA_UNSIGNED,
+	} data_t;
+
+	#define DATA_MAX DATA_UNSIGNED
+
+	static const std::string DATA_STR[] = {
+		"BOOLEAN", "FLOAT", "SIGNED", "STRING", "UNSIGNED",
+		};
+
+	#define DATA_STRING(_TYPE_) \
+		((_TYPE_) > DATA_MAX ? STRING_UNKNOWN : \
+		STRING_CHECK(DATA_STR[_TYPE_]))
+
+	typedef struct {
+		mirra::data_t type;
+		union {
+			bool bvalue;
+			float fvalue;
+			int32_t ivalue;
+			const char *strvalue;
+			uint32_t uvalue;
+		} data;
+	} parameter_data_t;
+
+	typedef std::map<uint32_t, mirra::parameter_data_t> object_parameter_t;
+
+	typedef std::map<mirra::object_t, mirra::object_parameter_t> parameter_t;
 
 	class object {
 

@@ -17,7 +17,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <SDL2/SDL.h>
 #include <functional>
 #include "../include/mirra_runtime.h"
 #include "mirra_runtime_type.h"
@@ -69,8 +68,9 @@ namespace mirra {
 		}
 
 		m_parameter_initialize = parameter;
+		mirra::display::acquire().initialize(m_parameter_initialize);
 
-		// TODO
+		// TODO: initialize sigletons
 
 		m_initialized = true;
 	}
@@ -115,6 +115,7 @@ namespace mirra {
 		__in mirra::runtime &context
 		)
 	{
+		mirra::display &display = mirra::display::acquire();
 
 		if(SDL_Init(RUNTIME_INIT_FLAGS)) {
 			THROW_MIRRA_RUNTIME_EXCEPTION_FORMAT(MIRRA_RUNTIME_EXCEPTION_EXTERNAL,
@@ -125,11 +126,18 @@ namespace mirra {
 			context.m_signal_start.notify();
 		}
 
+		display.start(context.m_parameter_start);
+
+		// TODO: start singletons
+
 		while(context.is_started()) {
-			runtime::process_input(context);
-			runtime::update(context);
+			runtime::process_input(context); // TODO: pass input singleton, instead of entire context
+			runtime::update(display);
 		}
 
+		// TODO: stop singletons
+
+		display.stop();
 		SDL_Quit();
 
 		if(context.m_signal_wait.is_notifiable()) {
@@ -175,7 +183,7 @@ namespace mirra {
 	runtime::stop(void)
 	{
 
-		if(is_started()) {
+		if(m_initialized && is_started()) {
 			set(false);
 
 			if(m_thread.joinable()) {
@@ -216,18 +224,19 @@ namespace mirra {
 			stop();
 			m_initialized = false;
 
-			// TODO
+			// TODO: uninitialize singletons
 
+			mirra::display::acquire().uninitialize();
 			m_parameter_initialize.clear();
 		}
 	}
 
 	void 
 	runtime::update(
-		__in mirra::runtime &context
+		__in mirra::display &display
 		)
 	{
-		// TODO
+		// TODO: update singletons
 	}
 
 	void 

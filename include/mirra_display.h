@@ -17,26 +17,41 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MIRRA_RUNTIME_H_
-#define MIRRA_RUNTIME_H_
+#ifndef MIRRA_DISPLAY_H_
+#define MIRRA_DISPLAY_H_
 
-#include <thread>
-#include "mirra_exception.h"
-#include "../include/mirra_display.h"
-#include "mirra_signal.h"
+#include <vector>
+#include <SDL2/SDL.h>
+#include "mirra_singleton.h"
 
 namespace mirra {
 
-	std::string version(
-		__in_opt bool verbose = false
-		);
+	enum {
+		DISPLAY_PARAMETER_HEIGHT = 0,
+		DISPLAY_PARAMETER_TITLE,
+		DISPLAY_PARAMETER_WIDTH,
+	};
 
-	class runtime :
-			public mirra::singleton<mirra::runtime> {
+	#define DISPLAY_PARAMETER_MAX DISPLAY_PARAMETER_WIDTH
+
+	#define RGB(_R_, _G_, _B_) RGBA(_R_, _G_, _B_, UINT8_MAX)
+	#define RGBA(_R_, _G_, _B_, _A_) \
+		((((_B_) & UINT8_MAX) << 24) | (((_G_) & UINT8_MAX) << 16) \
+		| (((_R_) & UINT8_MAX) << 8) | (_A_ & UINT8_MAX))
+
+	class display :
+			public mirra::singleton<mirra::display> {
 
 		public:
 
-			~runtime(void);
+			~display(void);
+
+			uint32_t at(
+				__in uint32_t x,
+				__in uint32_t y
+				);
+
+			void clear(void);
 
 			void initialize(
 				__in_opt const mirra::parameter_t &parameter = mirra::parameter_t()
@@ -45,6 +60,12 @@ namespace mirra {
 			bool is_initialized(void);
 
 			bool is_started(void);
+
+			void set(
+				__in uint32_t x,
+				__in uint32_t y,
+				__in uint32_t color
+				);
 
 			void start(
 				__in_opt const mirra::parameter_t &parameter = mirra::parameter_t()
@@ -58,48 +79,42 @@ namespace mirra {
 
 			void uninitialize(void);
 
-			void wait(
-				__in uint32_t timeout = SIGNAL_TIMEOUT_UNDEFINED
-				);
+			void update(void);
 
 		protected:
 
-			friend class mirra::singleton<mirra::runtime>;
+			friend class mirra::singleton<mirra::display>;
 
-			runtime(void);
+			display(void);
 
-			static void process_input(
-				__in mirra::runtime &context
+			display(
+				__in const display &other
 				);
 
-			static void run(
-				__in mirra::runtime &context
+			display &operator=(
+				__in const display &other
 				);
 
-			void set(
-				__in bool started
-				);
-
-			static void update(
-				__in mirra::display &display
-				);
+			std::vector<uint32_t> m_frame;
 
 			bool m_initialized;
-
-			std::mutex m_mutex;
 
 			mirra::parameter_t m_parameter_initialize;
 
 			mirra::parameter_t m_parameter_start;
 
-			mirra::signal m_signal_start;
+			int32_t m_renderer_height;
 
-			mirra::signal m_signal_wait;
+			int32_t m_renderer_width;
 
 			bool m_started;
 
-			std::thread m_thread;
+			SDL_Window *m_window;
+
+			SDL_Renderer *m_window_renderer;
+
+			SDL_Texture *m_window_texture;
 	};
 }
 
-#endif // MIRRA_RUNTIME_H_
+#endif // MIRRA_DISPLAY_H_

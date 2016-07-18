@@ -13,6 +13,10 @@ Changelog
 =========
 
 ###Version 0.1.1628
+*Updated: 7/17/2015*
+
+* Added display class
+
 *Updated: 7/14/2016*
 
 * Initial commit
