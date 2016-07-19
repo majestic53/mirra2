@@ -69,6 +69,7 @@ namespace mirra {
 
 		m_parameter_initialize = parameter;
 		mirra::display::acquire().initialize(m_parameter_initialize);
+		mirra::input::acquire().initialize(m_parameter_initialize);
 
 		// TODO: initialize sigletons
 
@@ -89,32 +90,12 @@ namespace mirra {
 	}
 
 	void 
-	runtime::process_input(
-		__in mirra::runtime &context
-		)
-	{
-		SDL_Event event;
-
-		while(SDL_PollEvent(&event)) {
-
-			switch(event.type) {
-
-				// TODO: handle button presses
-
-				case SDL_QUIT:
-					context.set(false);
-					break;
-				default:
-					break;
-			}
-		}
-	}
-
-	void 
 	runtime::run(
 		__in mirra::runtime &context
 		)
 	{
+		SDL_Event event;
+		mirra::input &input = mirra::input::acquire();
 		mirra::display &display = mirra::display::acquire();
 
 		if(SDL_Init(RUNTIME_INIT_FLAGS)) {
@@ -127,16 +108,33 @@ namespace mirra {
 		}
 
 		display.start(context.m_parameter_start);
+		input.start(context.m_parameter_start);
 
 		// TODO: start singletons
 
 		while(context.is_started()) {
-			runtime::process_input(context); // TODO: pass input singleton, instead of entire context
-			runtime::update(display);
+
+			while(SDL_PollEvent(&event)) {
+
+				switch(event.type) {
+					case SDL_KEYDOWN:
+					case SDL_KEYUP:
+						input.process(event.key);
+						break;
+					case SDL_QUIT:
+						context.set(false);
+						break;
+					default:
+						break;
+				}
+			}
+
+			// TODO: update singletons
 		}
 
 		// TODO: stop singletons
 
+		input.stop();
 		display.stop();
 		SDL_Quit();
 
@@ -226,17 +224,10 @@ namespace mirra {
 
 			// TODO: uninitialize singletons
 
+			mirra::input::acquire().uninitialize();
 			mirra::display::acquire().uninitialize();
 			m_parameter_initialize.clear();
 		}
-	}
-
-	void 
-	runtime::update(
-		__in mirra::display &display
-		)
-	{
-		// TODO: update singletons
 	}
 
 	void 

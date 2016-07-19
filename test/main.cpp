@@ -19,57 +19,35 @@
 
 #include "../include/mirra_runtime.h"
 
-#define DISPLAY_WIDTH 256
-#define DISPLAY_HEIGHT 240
-
-void 
+/*void 
 setup(
-	__inout mirra::parameter_t &configuration,
-	__in const std::string &title,
-	__in uint32_t width,
-	__in uint32_t height
+	__inout mirra::parameter_t &configuration
 	)
 {
 	mirra::parameter_t::iterator iter;
 	mirra::object_parameter_t::iterator attribute_iter;
 
 	configuration.insert(std::pair<mirra::object_t, mirra::object_parameter_t>(
-		mirra::OBJECT_DISPLAY, mirra::object_parameter_t()));
+		mirra::OBJECT_INPUT, mirra::object_parameter_t()));
 
-	iter = configuration.find(mirra::OBJECT_DISPLAY);
+	iter = configuration.find(mirra::OBJECT_INPUT);
 	if(iter != configuration.end()) {
-		iter->second.insert(std::pair<uint32_t, mirra::parameter_data_t>(mirra::DISPLAY_PARAMETER_TITLE, 
-			{mirra::DATA_STRING}));
-
-		attribute_iter = iter->second.find(mirra::DISPLAY_PARAMETER_TITLE);
-		if(attribute_iter != iter->second.end()) {
-			attribute_iter->second.data.strvalue = STRING_CHECK(title);
-		}
-
-		iter->second.insert(std::pair<uint32_t, mirra::parameter_data_t>(mirra::DISPLAY_PARAMETER_WIDTH, 
+		iter->second.insert(std::pair<uint32_t, mirra::parameter_data_t>(mirra::INPUT_PARAMETER_JOYPAD_1_B, 
 			{mirra::DATA_UNSIGNED}));
 
-		attribute_iter = iter->second.find(mirra::DISPLAY_PARAMETER_WIDTH);
+		attribute_iter = iter->second.find(mirra::INPUT_PARAMETER_JOYPAD_1_B);
 		if(attribute_iter != iter->second.end()) {
-			attribute_iter->second.data.uvalue = width;
-		}
-
-		iter->second.insert(std::pair<uint32_t, mirra::parameter_data_t>(mirra::DISPLAY_PARAMETER_HEIGHT, 
-			{mirra::DATA_UNSIGNED}));
-
-		attribute_iter = iter->second.find(mirra::DISPLAY_PARAMETER_HEIGHT);
-		if(attribute_iter != iter->second.end()) {
-			attribute_iter->second.data.uvalue = height;
+			attribute_iter->second.data.uvalue = SDL_SCANCODE_R;
 		}
 	}
-}
+}*/
 
 int 
 main(void)
 {
 	int result = 0;
 	std::string title;
-	mirra::parameter_t configuration;
+	//mirra::parameter_t configuration;
 
 	title = mirra::version(true);
 	std::cout << title << std::endl;
@@ -77,8 +55,8 @@ main(void)
 	try {
 		mirra::runtime &instance = mirra::runtime::acquire();
 		instance.initialize();
-		setup(configuration, title, DISPLAY_WIDTH, DISPLAY_HEIGHT);
-		instance.start(configuration);
+		//setup(configuration);
+		instance.start(/*configuration*/);
 		instance.wait();
 		instance.stop();
 		instance.uninitialize();

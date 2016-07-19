@@ -99,10 +99,6 @@ namespace mirra {
 
 			bool m_initialized;
 
-			mirra::parameter_t m_parameter_initialize;
-
-			mirra::parameter_t m_parameter_start;
-
 			int32_t m_renderer_height;
 
 			int32_t m_renderer_width;

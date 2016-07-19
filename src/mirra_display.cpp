@@ -22,13 +22,17 @@
 
 namespace mirra {
 
-	#define PIXEL_FILL RGB(0, 0, 0)
-
-	#define PIXEL_INDEX(_X_, _Y_, _W_) (((_Y_) * (_W_)) + (_X_))
+	#define DISPLAY_PARAMETER_DEFAULT_HEIGHT 240
+	#define DISPLAY_PARAMETER_DEFAULT_TITLE MIRRA
+	#define DISPLAY_PRAAMETER_DEFAULT_WIDTH 256
 
 	#define WINDOW_INIT_FLAGS (0)
 	#define WINDOW_RENDERER_INIT_FLAGS (SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC \
 		| SDL_RENDERER_TARGETTEXTURE)
+
+	#define PIXEL_FILL RGB(0, 0, 0)
+
+	#define PIXEL_INDEX(_X_, _Y_, _W_) (((_Y_) * (_W_)) + (_X_))
 
 	static const std::string DISPLAY_PARAMETER_STR[] = {
 		"HEIGHT", "TITLE", "WIDTH",
@@ -108,7 +112,6 @@ namespace mirra {
 			THROW_MIRRA_DISPLAY_EXCEPTION(MIRRA_DISPLAY_EXCEPTION_INITIALIZED);
 		}
 
-		m_parameter_initialize = parameter;
 		m_initialized = true;
 	}
 
@@ -168,55 +171,51 @@ namespace mirra {
 			THROW_MIRRA_DISPLAY_EXCEPTION(MIRAR_DISPLAY_EXCEPTION_STARTED);
 		}
 
-		m_parameter_start = parameter;
+		height = DISPLAY_PARAMETER_DEFAULT_HEIGHT;
+		title = DISPLAY_PARAMETER_DEFAULT_TITLE;
+		width = DISPLAY_PRAAMETER_DEFAULT_WIDTH;
 
 		iter = parameter.find(OBJECT_DISPLAY);
-		if(iter == parameter.end()) {
-			THROW_MIRRA_DISPLAY_EXCEPTION(MIRRA_DISPLAY_EXCEPTION_MISSING);
+		if(iter != parameter.end()) {
+
+			attribute_iter = iter->second.find(DISPLAY_PARAMETER_HEIGHT);
+			if(attribute_iter != iter->second.end()) {
+
+				if(attribute_iter->second.type != DATA_UNSIGNED) {
+					THROW_MIRRA_DISPLAY_EXCEPTION_FORMAT(MIRRA_DISPLAY_EXCEPTION_INVALID_PARAMETER,
+						"%s: %s (expecting %s)", DISPLAY_PARAMETER_STRING(DISPLAY_PARAMETER_HEIGHT),
+						DATA_STRING(attribute_iter->second.type), DATA_STRING(DATA_UNSIGNED));
+				}
+
+				height = attribute_iter->second.data.uvalue;
+			}
+
+			attribute_iter = iter->second.find(DISPLAY_PARAMETER_TITLE);
+			if(attribute_iter != iter->second.end()) {
+
+				if(attribute_iter->second.type != DATA_STRING) {
+					THROW_MIRRA_DISPLAY_EXCEPTION_FORMAT(MIRRA_DISPLAY_EXCEPTION_INVALID_PARAMETER,
+						"%s: %s (expecting %s)", DISPLAY_PARAMETER_STRING(DISPLAY_PARAMETER_TITLE),
+						DATA_STRING(attribute_iter->second.type), DATA_STRING(DATA_STRING));
+				}
+
+				title = (attribute_iter->second.data.strvalue ? attribute_iter->second.data.strvalue :
+					STRING_EMPTY);
+			}
+
+			attribute_iter = iter->second.find(DISPLAY_PARAMETER_WIDTH);
+			if(attribute_iter != iter->second.end()) {
+
+				if(attribute_iter->second.type != DATA_UNSIGNED) {
+					THROW_MIRRA_DISPLAY_EXCEPTION_FORMAT(MIRRA_DISPLAY_EXCEPTION_INVALID_PARAMETER,
+						"%s: %s (expecting %s)", DISPLAY_PARAMETER_STRING(DISPLAY_PARAMETER_WIDTH),
+						DATA_STRING(attribute_iter->second.type), DATA_STRING(DATA_UNSIGNED));
+				}
+
+				width = attribute_iter->second.data.uvalue;
+			}
 		}
 
-		attribute_iter = iter->second.find(DISPLAY_PARAMETER_TITLE);
-		if(attribute_iter == iter->second.end()) {
-			THROW_MIRRA_DISPLAY_EXCEPTION_FORMAT(MIRRA_DISPLAY_EXCEPTION_MISSING,
-				"%s", DISPLAY_PARAMETER_STRING(DISPLAY_PARAMETER_TITLE));
-		}
-
-		if(attribute_iter->second.type != DATA_STRING) {
-			THROW_MIRRA_DISPLAY_EXCEPTION_FORMAT(MIRRA_DISPLAY_EXCEPTION_MISSING,
-				"%s: %s (expecting %s)", DISPLAY_PARAMETER_STRING(DISPLAY_PARAMETER_TITLE),
-				DATA_STRING(attribute_iter->second.type), DATA_STRING(DATA_STRING));
-		}
-
-		title = (attribute_iter->second.data.strvalue ? attribute_iter->second.data.strvalue :
-			STRING_EMPTY);
-
-		attribute_iter = iter->second.find(DISPLAY_PARAMETER_WIDTH);
-		if(attribute_iter == iter->second.end()) {
-			THROW_MIRRA_DISPLAY_EXCEPTION_FORMAT(MIRRA_DISPLAY_EXCEPTION_MISSING,
-				"%s", DISPLAY_PARAMETER_STRING(DISPLAY_PARAMETER_WIDTH));
-		}
-
-		if(attribute_iter->second.type != DATA_UNSIGNED) {
-			THROW_MIRRA_DISPLAY_EXCEPTION_FORMAT(MIRRA_DISPLAY_EXCEPTION_MISSING,
-				"%s: %s (expecting %s)", DISPLAY_PARAMETER_STRING(DISPLAY_PARAMETER_WIDTH),
-				DATA_STRING(attribute_iter->second.type), DATA_STRING(DATA_UNSIGNED));
-		}
-
-		width = attribute_iter->second.data.uvalue;
-
-		attribute_iter = iter->second.find(DISPLAY_PARAMETER_HEIGHT);
-		if(attribute_iter == iter->second.end()) {
-			THROW_MIRRA_DISPLAY_EXCEPTION_FORMAT(MIRRA_DISPLAY_EXCEPTION_MISSING,
-				"%s", DISPLAY_PARAMETER_STRING(DISPLAY_PARAMETER_HEIGHT));
-		}
-
-		if(attribute_iter->second.type != DATA_UNSIGNED) {
-			THROW_MIRRA_DISPLAY_EXCEPTION_FORMAT(MIRRA_DISPLAY_EXCEPTION_MISSING,
-				"%s: %s (expecting %s)", DISPLAY_PARAMETER_STRING(DISPLAY_PARAMETER_HEIGHT),
-				DATA_STRING(attribute_iter->second.type), DATA_STRING(DATA_UNSIGNED));
-		}
-
-		height = attribute_iter->second.data.uvalue;
 		m_window = SDL_CreateWindow(STRING_CHECK(title), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
 			width, height, WINDOW_INIT_FLAGS);
 
@@ -283,7 +282,6 @@ namespace mirra {
 			m_renderer_height = 0;
 			m_renderer_width = 0;
 			m_frame.clear();
-			m_parameter_start.clear();
 		}
 	}
 
@@ -319,7 +317,6 @@ namespace mirra {
 		if(m_initialized) {
 			stop();
 			m_initialized = false;
-			m_parameter_initialize.clear();
 		}
 	}
 

@@ -22,8 +22,10 @@
 
 #include <thread>
 #include "mirra_exception.h"
-#include "../include/mirra_display.h"
 #include "mirra_signal.h"
+#include "mirra_singleton.h"
+#include "../include/mirra_display.h"
+#include "../include/mirra_input.h"
 
 namespace mirra {
 
@@ -68,20 +70,12 @@ namespace mirra {
 
 			runtime(void);
 
-			static void process_input(
-				__in mirra::runtime &context
-				);
-
 			static void run(
 				__in mirra::runtime &context
 				);
 
 			void set(
 				__in bool started
-				);
-
-			static void update(
-				__in mirra::display &display
 				);
 
 			bool m_initialized;

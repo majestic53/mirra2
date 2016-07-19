@@ -12,8 +12,13 @@ Table of Contents
 Changelog
 =========
 
+###Version 0.1.1629
+*Updated: 7/18/2016*
+
+* Added input class
+
 ###Version 0.1.1628
-*Updated: 7/17/2015*
+*Updated: 7/17/2016*
 
 * Added display class
 
