@@ -240,7 +240,6 @@ namespace mirra {
 		__in_opt const mirra::parameter_t &parameter
 		)
 	{
-		
 		mirra::parameter_t::const_iterator iter;
 		size_t button_base, button_iter, joypad_iter;		
 		mirra::object_parameter_t::const_iterator attribute_iter;

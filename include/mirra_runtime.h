@@ -23,7 +23,6 @@
 #include <thread>
 #include "mirra_exception.h"
 #include "mirra_signal.h"
-#include "mirra_singleton.h"
 #include "../include/mirra_display.h"
 #include "../include/mirra_input.h"
 

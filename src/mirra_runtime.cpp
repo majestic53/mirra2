@@ -19,6 +19,7 @@
 
 #include <functional>
 #include "../include/mirra_runtime.h"
+#include "../include/mirra_cpu.h"
 #include "mirra_runtime_type.h"
 
 namespace mirra {

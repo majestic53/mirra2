@@ -33,8 +33,8 @@ all: build archive
 archive:
 	@echo ''
 	@echo '--- BUILDING LIBRARY -----------------------'
-	ar rcs $(DIR_BIN)$(LIB) $(DIR_BUILD)mirra_display.o $(DIR_BUILD)mirra_exception.o $(DIR_BUILD)mirra_input.o $(DIR_BUILD)mirra_object.o \
-		$(DIR_BUILD)mirra_runtime.o $(DIR_BUILD)mirra_signal.o
+	ar rcs $(DIR_BIN)$(LIB) $(DIR_BUILD)mirra_cpu.o $(DIR_BUILD)mirra_display.o $(DIR_BUILD)mirra_exception.o $(DIR_BUILD)mirra_input.o \
+		$(DIR_BUILD)mirra_object.o $(DIR_BUILD)mirra_runtime.o $(DIR_BUILD)mirra_signal.o
 	@echo '--- DONE -----------------------------------'
 	@echo ''
 
@@ -42,7 +42,10 @@ build: build_base
 
 ### BASE ###
 
-build_base: mirra_display.o mirra_exception.o mirra_input.o mirra_object.o mirra_runtime.o mirra_signal.o
+build_base: mirra_cpu.o mirra_display.o mirra_exception.o mirra_input.o mirra_object.o mirra_runtime.o mirra_signal.o
+
+mirra_cpu.o: $(DIR_SRC)mirra_cpu.cpp $(DIR_INC)mirra_cpu.h
+	$(CC) $(CC_FLAGS) $(CC_BUILD_FLAGS) $(CC_TRACE_LVL) -c $(DIR_SRC)mirra_cpu.cpp -o $(DIR_BUILD)mirra_cpu.o
 
 mirra_display.o: $(DIR_SRC)mirra_display.cpp $(DIR_INC)mirra_display.h
 	$(CC) $(CC_FLAGS) $(CC_BUILD_FLAGS) $(CC_TRACE_LVL) -c $(DIR_SRC)mirra_display.cpp -o $(DIR_BUILD)mirra_display.o

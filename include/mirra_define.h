@@ -39,7 +39,7 @@ namespace mirra {
 	#define MIRRA_MILESTONE "alpha"
 	#define MIRRA_VERSION_MAJOR 0
 	#define MIRRA_VERSION_MINOR 1
-	#define MIRRA_VERSION_REVISION 1
+	#define MIRRA_VERSION_REVISION 2
 	#define MIRRA_VERSION_WORKWEEK 1629
 
 	#define STRING_EMPTY "EMPTY"
@@ -49,10 +49,15 @@ namespace mirra {
 		std::setw(sizeof(_TYPE_) * 2) << std::setfill('0') << std::hex \
 			<< (uintmax_t) ((_TYPE_) (_VAL_)) << std::dec
 
+	#define SCALAR_AS_TYPE(_TYPE_, _VAL_) *((_TYPE_ *) &(_VAL_))
+
 	#define SCALAR_INVALID(_TYPE_) ((_TYPE_) -1)
 
 	#define STRING_CHECK(_STR_) \
 		(_STR_.empty() ? STRING_EMPTY : _STR_.c_str())
+
+	#define STRUCT_PACK(_NAME_, _MEM_) \
+		typedef struct _MEM_ __attribute__((packed)) _NAME_
 }
 
 #endif // MIRRA_DEFINE_H_

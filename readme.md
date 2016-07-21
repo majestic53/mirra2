@@ -13,6 +13,10 @@ Changelog
 =========
 
 ###Version 0.1.1629
+*Updated: 7/20/2016*
+
+* Added cpu class (WIP)
+
 *Updated: 7/18/2016*
 
 * Added input class
