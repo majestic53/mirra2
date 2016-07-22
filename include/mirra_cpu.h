@@ -123,11 +123,11 @@ namespace mirra {
 
 			void nmi(void);
 
-			uint8_t pop_byte(void);
+			uint8_t pop(void);
 
 			uint16_t pop_word(void);
 
-			void push_byte(
+			void push(
 				__in uint8_t value
 				);
 
@@ -135,7 +135,7 @@ namespace mirra {
 				__in uint16_t value
 				);
 
-			uint8_t read_byte(
+			uint8_t read(
 				__in uint16_t address
 				);
 
@@ -143,9 +143,16 @@ namespace mirra {
 				__in uint16_t address
 				);
 
+			template <typename T>
+			static std::string register_as_string(
+				__in T value,
+				__in_opt bool verbose = false,
+				__in_opt bool flag = false
+				);
+
 			void reset(void);
 
-			void write_byte(
+			void write(
 				__in uint16_t address,
 				__in uint8_t value
 				);

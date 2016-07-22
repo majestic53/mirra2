@@ -71,6 +71,7 @@ namespace mirra {
 		m_parameter_initialize = parameter;
 		mirra::display::acquire().initialize(m_parameter_initialize);
 		mirra::input::acquire().initialize(m_parameter_initialize);
+		mirra::cpu::acquire().initialize(m_parameter_initialize);
 
 		// TODO: initialize sigletons
 
@@ -96,6 +97,7 @@ namespace mirra {
 		)
 	{
 		SDL_Event event;
+		mirra::cpu &cpu = mirra::cpu::acquire();
 		mirra::input &input = mirra::input::acquire();
 		mirra::display &display = mirra::display::acquire();
 
@@ -110,6 +112,7 @@ namespace mirra {
 
 		display.start(context.m_parameter_start);
 		input.start(context.m_parameter_start);
+		cpu.start(context.m_parameter_start);
 
 		// TODO: start singletons
 
@@ -131,10 +134,13 @@ namespace mirra {
 			}
 
 			// TODO: update singletons
+			//cpu.update();
+			// ---
 		}
 
 		// TODO: stop singletons
 
+		cpu.stop();
 		input.stop();
 		display.stop();
 		SDL_Quit();
@@ -225,6 +231,7 @@ namespace mirra {
 
 			// TODO: uninitialize singletons
 
+			mirra::cpu::acquire().uninitialize();
 			mirra::input::acquire().uninitialize();
 			mirra::display::acquire().uninitialize();
 			m_parameter_initialize.clear();
